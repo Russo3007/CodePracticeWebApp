@@ -8,13 +8,13 @@ function LobbyPage() {
 
 
   useEffect(() => {
-    const socket = io("https://code-practice-web-app-server.vercel.app/");
+    const socket = io("https://code-practice-web-app-server.vercel.app");
 
     // Initial fetch for all code blocks
     const fetchData = async () => {
-      console.log("fetching data lobbyPage from ", process.env.REACT_APP_SERVER_URL)
+      console.log("fetching data lobbyPage from ", 'https://code-practice-web-app-server.vercel.app')
       try {
-        const response = await fetch(process.env.REACT_APP_SERVER_URL + '/api/codeblocks');
+        const response = await fetch('https://code-practice-web-app-server.vercel.app' + '/api/codeblocks');
         const data = await response.json();
         setCodeBlocks(data);
       } catch (error) {

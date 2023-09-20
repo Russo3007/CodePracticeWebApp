@@ -4,7 +4,7 @@ const routes = require('./src/routes/routes.js');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: process.env.REACT_APP_PORT,
+    origin: "https://code-practice-web-app.vercel.app",
     methods: ["GET", "POST"]
   }
 });
@@ -12,8 +12,8 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-const allowedOrigins = [process.env.REACT_APP_PORT];
-process.env.REACT_APP_PORT
+const allowedOrigins = ['http://localhost:3000', 'https://code-practice-web-app.vercel.app'];
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
