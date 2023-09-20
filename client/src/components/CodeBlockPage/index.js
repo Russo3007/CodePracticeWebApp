@@ -15,6 +15,7 @@ function CodeBlockPage() {
   useEffect(() => {
     const newSocket = io("http://localhost:3001");
 
+    // Add logs for socket connection events
     newSocket.on('connect', () => {
       console.log('Successfully connected to the server');
     });
@@ -33,15 +34,23 @@ function CodeBlockPage() {
   }, [id]);
 
   useEffect(() => {
+    if (socket) {
+      socket.emit('joinSession', id);  // <-- Added this line
+    }
+  }, [socket, id]);
+
+  useEffect(() => {
     if (!socket) return;
 
     socket.on('roleAssignment', (role) => {
+      console.log('roleAssignment ', role);
       if (role === 'mentor') {
         setIsMentor(true);
       }
     });
 
-    socket.on('codeChange', (newCodeBlock) => {
+    socket.on('codeUpdate', (newCodeBlock) => {
+      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${id} with NewCode: ${newCodeBlock.code}`);
       setCodeBlock(newCodeBlock);
     });
   }, [socket]);
@@ -53,7 +62,6 @@ function CodeBlockPage() {
 
   const handleCodeChange = (value) => {
     if (!isMentor && socket) {
-      console.log(value);
       socket.emit('codeChange', { id, code: value });
     }
   };
@@ -76,10 +84,11 @@ function CodeBlockPage() {
 
   return (
     <div className="code-block-page">
+      {isMentor && <div className="mentor-banner">You are viewing in read-only mode</div>}
       {loading ? (
         <div className="loading">Loading...</div>
       ) : codeBlock ? (
-        <div>
+        <div className="code-editor-container">
           <h1>{codeBlock.title}</h1>
           <CodeMirror
             value={codeBlock.code}
@@ -88,7 +97,7 @@ function CodeBlockPage() {
               readOnly: isMentor,
               mode: 'javascript',
             }}
-            onChange={(editor, data, value) => { handleCodeChange(value) }}
+            onChange={(value, viewUpdate) => { handleCodeChange(value, viewUpdate) }}
           />
         </div>
       ) : (
@@ -99,6 +108,7 @@ function CodeBlockPage() {
       )}
     </div>
   );
+
 }
 
 export default CodeBlockPage;
