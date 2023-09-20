@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const routes = require('./routes/routes.js');
+const routes = require('./src/routes/routes.js');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
