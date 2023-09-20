@@ -8,7 +8,7 @@ function LobbyPage() {
 
 
   useEffect(() => {
-    const socket = io("http://localhost:3001");
+    const socket = io("https://code-practice-web-app-server.vercel.app/");
 
     // Initial fetch for all code blocks
     const fetchData = async () => {

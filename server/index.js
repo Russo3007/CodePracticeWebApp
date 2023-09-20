@@ -4,7 +4,7 @@ const routes = require('./src/routes/routes.js');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.REACT_APP_PORT,
     methods: ["GET", "POST"]
   }
 });
@@ -12,8 +12,8 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-const allowedOrigins = ['http://localhost:3000', 'YOUR_PRODUCTION_FRONTEND_URL'];
-
+const allowedOrigins = [process.env.REACT_APP_PORT];
+process.env.REACT_APP_PORT
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);

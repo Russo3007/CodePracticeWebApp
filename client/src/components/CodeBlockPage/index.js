@@ -13,7 +13,7 @@ function CodeBlockPage() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3001");
+    const newSocket = io("https://code-practice-web-app-server.vercel.app/");
 
     // Add logs for socket connection events
     newSocket.on('connect', () => {
@@ -69,7 +69,7 @@ function CodeBlockPage() {
   useEffect(() => {
     const fetchCodeBlockData = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/codeblocks/${id}`);
+        const response = await fetch(`https://code-practice-web-app-server.vercel.app/api/codeblocks/${id}`);
         const data = await response.json();
         setCodeBlock(data);
         setLoading(false);
