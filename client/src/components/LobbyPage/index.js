@@ -8,11 +8,11 @@ function LobbyPage() {
 
 
   useEffect(() => {
-    const socket = io("http://localhost:3001");
+    const socket = io(process.env.REACT_APP_SERVER_URL);
 
     // Initial fetch for all code blocks
     const fetchData = async () => {
-      console.log("fetching data lobbyPage from ", process.env.REACT_APP_SERVER_URL)
+      console.log("fetching data lobbyPage from ", process.env.REACT_APP_SERVER_URL);
       try {
         const response = await fetch(process.env.REACT_APP_SERVER_URL + '/api/codeblocks');
         const data = await response.json();

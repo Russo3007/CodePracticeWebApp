@@ -13,9 +13,8 @@ function CodeBlockPage() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3001");
+    const newSocket = io(process.env.REACT_APP_SERVER_URL);
 
-    // Add logs for socket connection events
     newSocket.on('connect', () => {
       console.log('Successfully connected to the server');
     });
@@ -35,7 +34,7 @@ function CodeBlockPage() {
 
   useEffect(() => {
     if (socket) {
-      socket.emit('joinSession', id);  // <-- Added this line
+      socket.emit('joinSession', id);
     }
   }, [socket, id]);
 
@@ -69,7 +68,8 @@ function CodeBlockPage() {
   useEffect(() => {
     const fetchCodeBlockData = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/api/codeblocks/${id}`);
+        console.log("fetching data lobbyPage from ", `${process.env.REACT_APP_SERVER_URL}/api/codeblocks/${id}`);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/codeblocks/${id}`);
         const data = await response.json();
         setCodeBlock(data);
         setLoading(false);

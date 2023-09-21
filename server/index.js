@@ -4,7 +4,7 @@ const routes = require('./src/routes/routes.js');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
@@ -12,19 +12,19 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-const allowedOrigins = ['http://localhost:3000', 'https://code-practice-web-app.vercel.app'];
+// const allowedOrigins = [process.env.REACT_APP_PORT, process.REACT_APP_URL];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin) return callback(null, true);
+//     if (allowedOrigins.indexOf(origin) === -1) {
+//       const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+//       return callback(new Error(msg), false);
+//     }
+//     return callback(null, true);
+//   },
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// }));
 
 
 app.use(express.json());
@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const port = process.env.SERVER_PORT || 3001;
+const port = process.env.SERVER_PORT;
 
 http.listen(port, () => {
   console.log(`Server and Socket.io listening on port ${port}`);
