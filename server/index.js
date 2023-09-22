@@ -1,35 +1,14 @@
-//Express server before changes 
-const express = require('express');
-const app = express();
+const { Server } = require("socket.io");
 const routes = require('./src/routes/routes.js');
-const http = require('http').createServer(app);
-const io = require('socket.io')(http, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-const cors = require('cors');
-const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
-// const allowedOrigins = [process.env.REACT_APP_PORT, process.REACT_APP_URL];
+const io = new Server(process.env.PORT, {
+  cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+  }
+});
 
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin) return callback(null, true);
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-// }));
-
-
-app.use(express.json());
-app.use('/api', routes);
 // Initialize codeSessions and codeBlockStatus maps
 const codeSessions = {};
 const codeBlockStatus = {};
@@ -76,10 +55,4 @@ io.on('connection', (socket) => {
     }
     delete socket.sessionId;
   });
-});
-
-const port = process.env.SERVER_PORT;
-
-http.listen(port, () => {
-  console.log(`Server and Socket.io listening on port ${port}`);
 });
