@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 import CodeBlockPage from '../CodeBlockPage';
 import './LobbyPage.css';
 
@@ -7,23 +7,21 @@ const socket = io(process.env.REACT_APP_SERVER_URL);
 
 function LobbyPage() {
   const [codeBlocks, setCodeBlocks] = useState([]);
+  const [codeId, setCodeId] = useState("");
   const [activeCodeBlocks, setActiveCodeBlocks] = useState({});
   const [isCodeSelected, setIsCodeSelected] = useState(false);
 
   useEffect(() => {
+
     // Initial fetch for all code blocks
-    const fetchData = async () => {
-      console.log("fetching data lobbyPage from ", process.env.REACT_APP_SERVER_URL);
+    socket.on("fetch_all_code_blocks", (allCodeBlocks) => {
+      console.log("fetching all data from server");
       try {
-        const response = await fetch(process.env.REACT_APP_SERVER_URL + '/api/codeblocks');
-        const data = await response.json();
-        setCodeBlocks(data);
+        setCodeBlocks(allCodeBlocks);
       } catch (error) {
         console.error('Error fetching code blocks:', error);
       }
-    };
-
-    fetchData();
+    });
 
     // Listen for updates about which code blocks are active
     socket.on('codeBlockStatusUpdate', (updatedActiveCodeBlocks) => {
@@ -36,7 +34,8 @@ function LobbyPage() {
 
   const handleButtonClick = (blockId) => {
     console.log(`Button clicked for block with ID ${blockId}`);
-    
+    setCodeId(blockId);
+    setIsCodeSelected(true);
   };
   
   const renderAvailableCodeBlocks = () => {
@@ -61,7 +60,11 @@ function LobbyPage() {
       }
       return null;
     });
-  };  
+  };
+  
+  const handleBack = () => {
+    setIsCodeSelected(false);
+  };
 
   return (
     <div className='LobbyPage'>
@@ -78,7 +81,7 @@ function LobbyPage() {
         </div>
         ) : (
           <div>
-            <CodeBlockPage socket={socket} codeBlockName={codeBlockName} initialCode={initialCode} isMentor={isMantor} solution={solution} />
+            <CodeBlockPage socket={socket} codeId={codeId} />
               <div className="back-button">
                 <button onClick={handleBack}>Back</button>
               </div>
