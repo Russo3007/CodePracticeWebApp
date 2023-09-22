@@ -17,6 +17,7 @@ function LobbyPage() {
     socket.on("fetch_all_code_blocks", (allCodeBlocks) => {
       console.log("fetching all data from server");
       try {
+        console.log(allCodeBlocks);
         setCodeBlocks(allCodeBlocks);
       } catch (error) {
         console.error('Error fetching code blocks:', error);
@@ -68,9 +69,9 @@ function LobbyPage() {
 
   return (
     <div className='LobbyPage'>
-      {isCodeSelected ? (
+      {!isCodeSelected ? (
         <div className="lobby-container">
-          <h1 class='title'>Chose Code Blocks</h1>
+          <h1 className='title'>Chose Code Blocks</h1>
             <div className="code-block-grid">
               {renderAvailableCodeBlocks()}
             </div>
