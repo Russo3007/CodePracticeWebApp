@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const routes = require('./src/routes/routes.js');
+const { codeBlocks } = require("./src/models/codeBlocks.js")
 require('dotenv').config();
 
 const io = new Server(process.env.PORT, {
@@ -8,6 +8,7 @@ const io = new Server(process.env.PORT, {
       methods: ["GET", "POST"]
   }
 });
+console.log(`Server and Socket.io listening on port ${process.env.PORT}`);
 
 // Initialize codeSessions and codeBlockStatus maps
 const codeSessions = {};
@@ -16,6 +17,8 @@ const codeBlockStatus = {};
 io.on('connection', (socket) => {
   console.log('A User connected:', socket.id);
 
+  socket.emit('fetch_all_code_blocks', codeBlocks);
+  
   socket.on('joinSession', (sessionId) => {
     console.log(`[socket] joinSession: ${sessionId}`);
     socket.join(sessionId);
