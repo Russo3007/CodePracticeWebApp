@@ -14,15 +14,22 @@ function LobbyPage() {
 
   useEffect(() => {
     const handleConnection = async () => {
-      socket.on("connected_to_server", (connectionSucceeded) => {
-        if(connectionSucceeded) {
-          setIsConnected(true);
-        }
-      });
+      try {
+        socket.on("connected_to_server", (connectionSucceeded) => {
+          if (connectionSucceeded) {
+            setIsConnected(true);
+            console.log("Connected to the server successfully.");
+          } else {
+            console.error("Connection to the server failed.");
+          }
+        });
+      } catch (error) {
+        console.error("An error occurred while setting up the socket:", error);
+      }
     };
-    
-    handleConnection()
-  });
+  
+    handleConnection();
+  }, []); 
 
   useEffect(() => {
 
