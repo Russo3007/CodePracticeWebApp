@@ -17,6 +17,8 @@ const codeBlockStatus = {};
 io.on('connection', (socket) => {
   console.log('A User connected:', socket.id);
 
+  socket.emit('connected_to_server', true);
+  
   socket.emit('fetch_all_code_blocks', codeBlocks);
   
   socket.on('joinSession', (sessionId) => {
