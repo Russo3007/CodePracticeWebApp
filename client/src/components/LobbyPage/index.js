@@ -10,6 +10,19 @@ function LobbyPage() {
   const [codeId, setCodeId] = useState("");
   const [activeCodeBlocks, setActiveCodeBlocks] = useState({});
   const [isCodeSelected, setIsCodeSelected] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const handleConnection = async () => {
+      socket.on("connected_to_server", (connectionSucceeded) => {
+        if(connectionSucceeded) {
+          setIsConnected(true);
+        }
+      });
+    };
+    
+    handleConnection()
+  });
 
   useEffect(() => {
 
@@ -31,7 +44,7 @@ function LobbyPage() {
     });
 
     return () => socket.disconnect();
-  }, []);
+  }, [isConnected]);
 
   const handleButtonClick = (blockId) => {
     console.log(`Button clicked for block with ID ${blockId}`);
