@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect_from_session', () => {
     console.log('A user disconnected:', socket.id);
     if (socket.role === 'student' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
