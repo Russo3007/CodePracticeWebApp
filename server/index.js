@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
   
   socket.on('joinSession', (sessionId) => {
     console.log(`[socket] joinSession: ${sessionId}`);
+    /*STOPED HERE: check what join do*/
     socket.join(sessionId);
     socket.sessionId = sessionId;
 
@@ -50,9 +51,9 @@ io.on('connection', (socket) => {
       socket.to(socket.sessionId).emit('codeUpdate', code);
     }
   });
-
+      /*NTD: CHECK that user disconnected from session propperly */
   socket.on('disconnect_from_session', () => {
-    console.log('A user disconnected:', socket.id);
+    console.log(`user '${socket.id}' disconnected from session: `);
     if (socket.role === 'student' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
       io.emit('codeBlockStatusUpdate', codeBlockStatus);
