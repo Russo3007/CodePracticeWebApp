@@ -7,6 +7,7 @@ const socket = io(process.env.REACT_APP_SERVER_URL);
 
 function LobbyPage() {
   const [codeBlocks, setCodeBlocks] = useState([]);
+  const [selectedCodeBlock, setSelectedCodeBlock] = useState([]);
   const [codeId, setCodeId] = useState("");
   const [activeCodeBlocks, setActiveCodeBlocks] = useState({});
   const [isCodeSelected, setIsCodeSelected] = useState(false);
@@ -37,7 +38,6 @@ function LobbyPage() {
     socket.on("fetch_all_code_blocks", (allCodeBlocks) => {
       console.log("fetching all data from server");
       try {
-        console.log(allCodeBlocks);
         setCodeBlocks(allCodeBlocks);
       } catch (error) {
         console.error('Error fetching code blocks:', error);
@@ -53,12 +53,32 @@ function LobbyPage() {
     return () => socket.disconnect();
   }, [isConnected]);
 
+  const findCodeBlockById = (codeBlocks, blockId) => {
+    for (const block of codeBlocks) {
+      if (block.id === blockId) {
+        return block;
+      }
+    }
+    return null;
+  }
+
   const handleButtonClick = (blockId) => {
     console.log(`Button clicked for block with ID ${blockId}`);
     setCodeId(blockId);
+
+    const foundBlock = findCodeBlockById(codeBlocks, blockId);
+    setSelectedCodeBlock(foundBlock);
     setIsCodeSelected(true);
   };
-  
+
+  useEffect(() => {
+    if (selectedCodeBlock) {
+      console.log('Found codeBlock:', selectedCodeBlock);
+    } else {
+      console.log('CodeBlock not found.');
+    }
+  }, [selectedCodeBlock]);
+    
   const renderAvailableCodeBlocks = () => {
     return codeBlocks.map((block) => (
       <div key={block.id} className="code-block">
@@ -102,7 +122,7 @@ function LobbyPage() {
         </div>
         ) : (
           <div>
-            <CodeBlockPage socket={socket} codeId={codeId} />
+            <CodeBlockPage socket={socket} selectedCodeBlock={selectedCodeBlock} />
               <div className="back-button">
                 <button onClick={handleBack}>Back</button>
               </div>

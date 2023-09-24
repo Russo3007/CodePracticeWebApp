@@ -1,42 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
-import io from 'socket.io-client';
-import { useParams } from 'react-router-dom';
 import './CodeBlockPage.css';
+import 'socket.io-client';
 
-function CodeBlockPage() {
-  const { id } = useParams();
-
+function CodeBlockPage({socket, selectedCodeBlock}) {
   const [codeBlock, setCodeBlock] = useState(null);
   const [isMentor, setIsMentor] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-    const newSocket = io(process.env.REACT_APP_SERVER_URL);
-
-    newSocket.on('connect', () => {
-      console.log('Successfully connected to the server');
-    });
-
-    newSocket.on('connect_error', (error) => {
-      console.log('Connection Error:', error);
-    });
-
-    newSocket.on('disconnect', () => {
-      console.log('Disconnected from server');
-    });
-
-    setSocket(newSocket);
-
-    return () => newSocket.disconnect();
-  }, [id]);
+  const [codeId, setCodeId] = useState("")
 
   useEffect(() => {
     if (socket) {
-      socket.emit('joinSession', id);
+      setCodeId(selectedCodeBlock.id);
+      console.log('before joinSession: ',selectedCodeBlock.id);
+      socket.emit('joinSession', codeId);
     }
-  }, [socket, id]);
+  }, []);
 
   useEffect(() => {
     if (!socket) return;
@@ -49,7 +28,7 @@ function CodeBlockPage() {
     });
 
     socket.on('codeUpdate', (newCodeBlock) => {
-      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${id} with NewCode: ${newCodeBlock.code}`);
+      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${codeId} with NewCode: ${codeBlock.code}`);
       setCodeBlock(newCodeBlock);
     });
   }, [socket]);
@@ -61,17 +40,14 @@ function CodeBlockPage() {
 
   const handleCodeChange = (value) => {
     if (!isMentor && socket) {
-      socket.emit('codeChange', { id, code: value });
+      socket.emit('codeChange', { codeId, code: value });
     }
   };
 
   useEffect(() => {
     const fetchCodeBlockData = async () => {
       try {
-        console.log("fetching data lobbyPage from ", `${process.env.REACT_APP_SERVER_URL}/api/codeblocks/${id}`);
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/codeblocks/${id}`);
-        const data = await response.json();
-        setCodeBlock(data);
+        setCodeBlock(selectedCodeBlock);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching code blocks:', error);
@@ -80,7 +56,7 @@ function CodeBlockPage() {
     };
 
     fetchCodeBlockData();
-  }, [id]);
+  }, [codeId]);
 
   return (
     <div className="code-block-page">
