@@ -12,9 +12,9 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
   useEffect(() => {
     console.log(`user-${socket.id} has entered code block: ${selectedCodeBlock.title}`);
     if (socket) {
+      console.log('before joinSession: ', selectedCodeBlock.id);
+      socket.emit('joinSession', selectedCodeBlock.id);
       setCodeId(selectedCodeBlock.id);
-      console.log('before joinSession: ', codeId);
-      socket.emit('joinSession', codeId);
     }
   }, []);
 
@@ -34,7 +34,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
     });
 
     socket.on('codeUpdate', (newCodeBlock) => {
-      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${codeId} with NewCode: ${codeBlock.code}`);
+      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${codeId} with NewCode: ${newCodeBlock.code}`);
       setCodeBlock(newCodeBlock);
     });
   }, [socket]);
