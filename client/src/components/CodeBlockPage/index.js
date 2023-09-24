@@ -10,21 +10,27 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
   const [codeId, setCodeId] = useState("")
 
   useEffect(() => {
+    console.log(`user-${socket.id} has entered code block: ${selectedCodeBlock.title}`);
     if (socket) {
       setCodeId(selectedCodeBlock.id);
-      console.log('before joinSession: ',selectedCodeBlock.id);
+      console.log('before joinSession: ', codeId);
       socket.emit('joinSession', codeId);
     }
+  }, []);
+
+  useEffect(() => {
+    setIsMentor(window.localStorage.getItem('isMentor') === 'true');
+    window.localStorage.setItem('isMentor', 'false');
   }, []);
 
   useEffect(() => {
     if (!socket) return;
 
     socket.on('roleAssignment', (role) => {
-      console.log('roleAssignment ', role);
       if (role === 'mentor') {
         setIsMentor(true);
       }
+      console.log(`user '${socket.id}' role in session is "${role}".`);
     });
 
     socket.on('codeUpdate', (newCodeBlock) => {
@@ -33,13 +39,9 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
     });
   }, [socket]);
 
-  useEffect(() => {
-    setIsMentor(window.localStorage.getItem('isMentor') === 'true');
-    window.localStorage.setItem('isMentor', 'false');
-  }, []);
-
   const handleCodeChange = (value) => {
-    if (!isMentor && socket) {
+    if ((!isMentor) && socket) {
+      console.log(`[socket]: updated server that code '${selectedCodeBlock.title}' changed.`);
       socket.emit('codeChange', { codeId, code: value });
     }
   };
@@ -49,6 +51,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
       try {
         setCodeBlock(selectedCodeBlock);
         setLoading(false);
+        console.log(`fetched code block '${selectedCodeBlock.title}'`)
       } catch (error) {
         console.error('Error fetching code blocks:', error);
         setLoading(false);
@@ -73,7 +76,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
               readOnly: isMentor,
               mode: 'javascript',
             }}
-            onChange={(value, viewUpdate) => { handleCodeChange(value, viewUpdate) }}
+            onChange={(value) => { handleCodeChange(value) }}
           />
         </div>
       ) : (
