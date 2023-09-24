@@ -49,8 +49,6 @@ function LobbyPage() {
       console.log("[lobbyPage] updatedActiveCodeBlocks:", updatedActiveCodeBlocks)
       setActiveCodeBlocks(updatedActiveCodeBlocks);
     });
-
-    return () => socket.disconnect();
   }, [isConnected]);
 
   const findCodeBlockById = (codeBlocks, blockId) => {
@@ -105,6 +103,7 @@ function LobbyPage() {
   
   const handleBack = () => {
     setIsCodeSelected(false);
+    socket.emit("disconnect_from_session")
   };
 
   return (
