@@ -27,12 +27,13 @@ io.on('connection', (socket) => {
     socket.sessionId = sessionId;
 
     if (!codeBlockStatus[sessionId]) {
-      codeBlockStatus[sessionId] = 'editing';
-      socket.role = 'student';
-      console.log(`Student ${socket.id} started editing session ${sessionId}`);
-    } else {
       socket.role = 'mentor';
+      codeBlockStatus[sessionId] = 'mentoring';
       console.log(`Mentor ${socket.id} joined session ${sessionId}`);
+    } else {
+      socket.role = 'student';
+      codeBlockStatus[sessionId] = 'editing';
+      console.log(`Student ${socket.id} started editing session ${sessionId}`);
     }
 
     socket.emit('roleAssignment', socket.role);
@@ -53,7 +54,7 @@ io.on('connection', (socket) => {
   });
       /*NTD: CHECK that user disconnected from session propperly */
   socket.on('disconnect_from_session', () => {
-    console.log(`user '${socket.id}' disconnected from session: `);
+    console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
     if (socket.role === 'student' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
       io.emit('codeBlockStatusUpdate', codeBlockStatus);
