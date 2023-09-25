@@ -46,19 +46,26 @@ io.on('connection', (socket) => {
   });
 
   socket.on('codeChange', (code) => {
-    console.log("[socket] codeChange:", code);
+    console.log("[socket]: ${socket.id} edit code.");
     if (socket.sessionId) {
       codeSessions[socket.sessionId] = code;
       socket.to(socket.sessionId).emit('codeUpdate', code);
     }
   });
-      /*NTD: CHECK that user disconnected from session propperly */
-  socket.on('disconnect_from_session', () => {
-    console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
-    if (socket.role === 'student' && socket.sessionId) {
+  
+  const handleClientDisconnectedFromSession = (socket) => {
+    if (socket.role === 'mentor' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
-      io.emit('codeBlockStatusUpdate', codeBlockStatus);
+      //io.emit('codeBlockStatusUpdate', codeBlockStatus);
+    } else if (socket.role === 'student' && codeBlockStatus[socket.sessionId]) {
+      codeBlockStatus[socket.sessionId] = 'mentoring';
     }
+    console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
     delete socket.sessionId;
+  };
+
+  socket.on("disconnect", () => {
+    handleClientDisconnectedFromSession(socket);
+    console.log(`A user with id : ${socket.id} disconnected`);
   });
 });
