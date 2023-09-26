@@ -29,11 +29,15 @@ On the Code block page, two users can collaborate in real time, with one acting 
 
 ## Deployment
 
-Please note that the project is not currently deployed due to some limitations:
+The project is now successfully deployed and accessible online. You can access the live version by following the link below:
 
-- **Vercel**: The client and server have been deployed to Vercel. However, Vercel does not support direct WebSocket connections between the server and client, which are necessary for real-time communication via Socket.io. As a result, real-time collaboration features may not work in the deployed version.
+[Live Project Link](https://code-practice-web-app.vercel.app)
 
-- **Railway.app**: An attempt was made to deploy the server on Railway.app as a potential solution. However, there were challenges with configuring Railway.app for WebSocket support, which led to deployment difficulties.
+The deployment process presented some initial challenges, but through diligent effort and problem-solving, I have managed to overcome them. The project is now fully functional, and real-time collaboration features are operational.
+
+If you encounter any issues or have feedback regarding the live deployment, please feel free to reach out. Your insights are valuable and will contribute to further improvements.
+
+---
 
 ## Local Development
 
