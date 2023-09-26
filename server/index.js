@@ -53,12 +53,23 @@ io.on('connection', (socket) => {
     }
   });
   
+  const findCodeBlockById = (codeBlocks, blockId) => {
+    for (const block of codeBlocks) {
+      if (block.id === blockId) {
+        return block;
+      }
+    }
+    return null;
+  }
+
   const handleClientDisconnectedFromSession = (socket) => {
     if (socket.role === 'mentor' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
       io.emit('codeBlockStatusUpdate', codeBlockStatus);
     } else if (socket.role === 'student' && codeBlockStatus[socket.sessionId]) {
       codeBlockStatus[socket.sessionId] = 'mentoring';
+      const originalCodeBlock = findCodeBlockById(codeBlocks, socket.sessionId);
+      codeSessions[socket.sessionId] = originalCodeBlock.code;
     }
     console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
     delete socket.sessionId;
