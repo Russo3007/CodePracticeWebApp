@@ -10,6 +10,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
   const [isMentor, setIsMentor] = useState(false);
   const [loading, setLoading] = useState(true);
   const [codeId, setCodeId] = useState("")
+  const [solution, setSolution] = useState("")
 
   useEffect(() => {
     console.log(`user-${socket.id} has entered code block: ${selectedCodeBlock.title}`);
@@ -17,6 +18,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
       console.log('before joinSession: ', selectedCodeBlock.id);
       socket.emit('joinSession', selectedCodeBlock.id);
       setCodeId(selectedCodeBlock.id);
+      setSolution(selectedCodeBlock.solution);
     }
   }, []);
 
@@ -91,7 +93,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
           <p>The requested code block was not found.</p>
         </div>
       )}
-      <div> {isMentor && <h2>Solution:</h2> && <Highlight> {codeBlock.solution} </Highlight>} </div>
+      <div> {isMentor && <h2>Solution:</h2> && <Highlight> {solution} </Highlight>} </div>
       <div> {isMentor && <div className="mentor-banner">You are viewing in read-only mode</div>} </div>
     </div>
   );
