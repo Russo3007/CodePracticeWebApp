@@ -17,3 +17,22 @@
     background-color: #f0f0f0;
   }
   
+/* Style the "Back" button */
+.back-button {
+  margin-top: 10px;
+  text-align: center;
+  }
+  
+  .back-button button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  }
+  
+  .back-button button:hover {
+  background-color: #c82333;
+  }
