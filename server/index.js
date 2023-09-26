@@ -56,13 +56,17 @@ io.on('connection', (socket) => {
   const handleClientDisconnectedFromSession = (socket) => {
     if (socket.role === 'mentor' && socket.sessionId) {
       delete codeBlockStatus[socket.sessionId];
-      //io.emit('codeBlockStatusUpdate', codeBlockStatus);
+      io.emit('codeBlockStatusUpdate', codeBlockStatus);
     } else if (socket.role === 'student' && codeBlockStatus[socket.sessionId]) {
       codeBlockStatus[socket.sessionId] = 'mentoring';
     }
     console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
     delete socket.sessionId;
   };
+
+  socket.on("disconnect_from_session", () => {
+    handleClientDisconnectedFromSession(socket);
+  })
 
   socket.on("disconnect", () => {
     handleClientDisconnectedFromSession(socket);
