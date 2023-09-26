@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
   
   socket.on('joinSession', (sessionId) => {
     console.log(`[socket] joinSession: ${sessionId}`);
-    /*STOPED HERE: check what join do*/
     socket.join(sessionId);
     socket.sessionId = sessionId;
 
@@ -68,8 +67,6 @@ io.on('connection', (socket) => {
       io.emit('codeBlockStatusUpdate', codeBlockStatus);
     } else if (socket.role === 'student' && codeBlockStatus[socket.sessionId]) {
       codeBlockStatus[socket.sessionId] = 'mentoring';
-      const originalCodeBlock = findCodeBlockById(codeBlocks, socket.sessionId);
-      codeSessions[socket.sessionId] = originalCodeBlock.code;
     }
     console.log(`user '${socket.id}' disconnected from session: ${socket.sessionId}`);
     delete socket.sessionId;
