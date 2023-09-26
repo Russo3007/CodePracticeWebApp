@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
+import MonacoEditor from 'react-monaco-editor';
 import './CodeBlockPage.css';
 import 'socket.io-client';
+import Highlight from 'react-highlight';
+import 'highlight.js/styles/github.css';
 
 function CodeBlockPage({socket, selectedCodeBlock}) {
   const [codeBlock, setCodeBlock] = useState(null);
@@ -34,7 +36,7 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
     });
 
     socket.on('codeUpdate', (newCodeBlock) => {
-      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${codeId} with NewCode: ${newCodeBlock.code}`);
+      console.log(`[codeBlockPage] listening to codeUpdate event - of sessionId ${codeId}`);
       setCodeBlock(newCodeBlock);
     });
   }, [socket]);
@@ -63,31 +65,36 @@ function CodeBlockPage({socket, selectedCodeBlock}) {
 
   return (
     <div className="code-block-page">
-      {isMentor && <div className="mentor-banner">You are viewing in read-only mode</div>}
       {loading ? (
         <div className="loading">Loading...</div>
-      ) : codeBlock ? (
+        ) : codeBlock ? (
         <div className="code-editor-container">
           <h1>{codeBlock.title}</h1>
-          <CodeMirror
+          <MonacoEditor
+            height="300"
+            width="900"
+            language="javascript"
+            theme="vs-dark"
             value={codeBlock.code}
             options={{
               lineNumbers: true,
               readOnly: isMentor,
-              mode: 'javascript',
             }}
-            onChange={(value) => { handleCodeChange(value) }}
-          />
+            onChange={(value) => {
+              handleCodeChange(value);
+            }}
+            />
         </div>
       ) : (
         <div className="code-block-not-found">
-          <h1>Code Block Not Found</h1>
+          <h2>Code Block Not Found</h2>
           <p>The requested code block was not found.</p>
         </div>
       )}
+      <div> {isMentor && <h2>Solution:</h2> && <Highlight> {codeBlock.solution} </Highlight>} </div>
+      <div> {isMentor && <div className="mentor-banner">You are viewing in read-only mode</div>} </div>
     </div>
   );
-
 }
 
 export default CodeBlockPage;

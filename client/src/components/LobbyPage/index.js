@@ -8,7 +8,6 @@ const socket = io(process.env.REACT_APP_SERVER_URL);
 function LobbyPage() {
   const [codeBlocks, setCodeBlocks] = useState([]);
   const [selectedCodeBlock, setSelectedCodeBlock] = useState([]);
-  const [codeId, setCodeId] = useState("");
   const [activeCodeBlocks, setActiveCodeBlocks] = useState({});
   const [isCodeSelected, setIsCodeSelected] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -46,7 +45,7 @@ function LobbyPage() {
 
     // Listen for updates about which code blocks are active
     socket.on('codeBlockStatusUpdate', (updatedActiveCodeBlocks) => {
-      console.log("[lobbyPage] updatedActiveCodeBlocks:", updatedActiveCodeBlocks)
+      console.log("[lobbyPage] updated active code blocks.")
       setActiveCodeBlocks(updatedActiveCodeBlocks);
     });
   }, [isConnected]);
@@ -62,8 +61,6 @@ function LobbyPage() {
 
   const handleButtonClick = (blockId) => {
     console.log(`Button clicked for block with ID ${blockId}`);
-    setCodeId(blockId);
-
     const foundBlock = findCodeBlockById(codeBlocks, blockId);
     setSelectedCodeBlock(foundBlock);
     setIsCodeSelected(true);
@@ -71,9 +68,9 @@ function LobbyPage() {
 
   useEffect(() => {
     if (selectedCodeBlock) {
-      console.log('Found codeBlock:', selectedCodeBlock);
+      console.log('Found code block:', selectedCodeBlock.title);
     } else {
-      console.log('CodeBlock not found.');
+      console.log('Code block not found.');
     }
   }, [selectedCodeBlock]);
     
